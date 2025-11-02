@@ -1,0 +1,2 @@
+# To avoid the bitcode created by python
+__pycache__/
