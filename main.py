@@ -1,85 +1,89 @@
-# The class Author represents the author of a book or of a series of books
-class Author:
-    # The constructor of the Author class
-    def __init__(self,first_name,last_name):
-        self.first_name=first_name
-        self.last_name=last_name
-        books=[]
+from libraries import library1,library2,library3
+from set_class_library import set_library
+from classes import Reader
+
+def choosen_library(library,reader):
+    print(f"You have chosen the library: {library.name_of_library}")
+    input_number=0
+    message_for_operations=["1. Show books available in the library.",
+                            "2. See the list of authors.",
+                            "3. Borrow a book.",
+                            "4. Return a book.",
+                            "5. See the list of borrowed books.",
+                            "6. Exit the program."
+                            ]
+    while input_number!=6:
+        print("Operations to perform:")
+        for i in message_for_operations:
+            print(i)
+        input_number=int(input("Your number: "))
+        while input_number not in [1,2,3,4,5,6]:
+            print("The number chosen doesn't respect the instructions. Introduce another one.")
+            input_number=int(input("Your number: "))
+        if input_number==1:
+            library.show_books()
+        elif input_number==2:
+            for author in library.authors:
+                print(author.name)
+        elif input_number==3:
+            print("Here is the list of available books. Choose one accoudingly to it's name:")
+            print()
+            library.show_books()
+            print()
+            book_name=input("Book name: ")
+            book_object=library.return_book_object(book_name)
+            if book_object==None:
+                print("There is not any book with that name.")
+            elif book_object.borrowed==True:
+                print("This book has already been borrowed.")
+            else:
+                reader.borrow_book(book_object)
+                print("The book has been borrowed successfully.")
+        elif input_number==4:
+            reader.see_borrowed_books()
+            if len(reader.books_borrowed)!=0:
+                print("Introduce the book that you want to return:")
+                book_name=input("Book name: ")
+                book_object=library.return_book_object(book_name)
+                if book_object==None:
+                    print("There is not any book with that name.")
+                else:
+                    reader.return_book(book_object)
+                    print("The book has been returned.")
+        elif input_number==5:
+            reader.see_borrowed_books()
+        
+        print()
+
+        
+
+def main():
+    libraries=[set_library(library1,"Library of Congress"),set_library(library2,"New York Public Library"),set_library(library3,"Boston Public Library")]
+
+    print("Hello! Thank you for choosing out program of library sistem.")
+    print("Before we start, please introduce you fullname")
+    fullname=input("Fullnane: ")
+    print()
+
+    reader=Reader(fullname)
+
+    print("Now that you have introduced your name we can start.")
+    print("Below you have a list of the libraries that we represent:")
+    print()
+
+    print(f"1.{libraries[0].name_of_library}")
+    print(f"2.{libraries[1].name_of_library}")
+    print(f"3.{libraries[2].name_of_library}")
+    print()
+
+    print("Choose a numbert from 1 to 3 that represents the library that you choose and from where you want to borrow your book.")
+    number=int(input("Your number is: "))
     
-    # The metod that allows us to add books
-    def add_book(self,book):
-        self.books.append(book)
+    while number not in [1,2,3]:
+        print("The numbert introduces doesn't resprect the instructions.Introduce a new one.")
+        number=int(input("Your number is: "))
     
-    # The method that shows the books of the author
-    def show_book(self):
-        # Check to see if there are any books written by this author
-        if len(self.books)==0:
-            print(f"The author {self.first_name} {self.last_name} has no books written")
-        else:
-            print(f"The author {self.first_name} {self.last_name} has written these books:")
-            for book in self.books:
-                print(book)# Aici trebuie sa zic book.name ca sa afiseza numele cartii
+    choosen_library(libraries[number-1],reader)
 
-# The class Book represents a book
-class Book:
-    # The constructor of the Book class
-    def __init__(self,name,author):
-        self.name=name
-        self.author=author
-        self.borrowed=False
-
-    # The method that describes the book and the status of the book(can be borrowed or not)
-    def describe_book(self):
-        print(f"The book {self.name} is written by {self.author}.")
-        if self.borrowed==True:
-            print("It is currently in the possesion of the library and can be borrowed.")
-        else:
-            print("It is not currently in the possesion of the library and cannot be borrowed.")
-
-# The Reader class
-class Reader:
-    # The constructor of the Reader class
-    def __init__(self,first_name,last_name):
-        self.firs_name=first_name
-        self.last_name=last_name
-        self.books_borrowed=[]
-
-    # The method that allows a reader to borrow a book
-    def borrow_book(self,book):
-        self.books_borrowed.append(book)
-        book.borrowed=True
-
-    # The method that allows a reader to return a book
-    def return_book(self,book):
-        book.borrowed=False
-        self.books_borrowed.pop(book)
-    
-    # The method that allws a user to see all of the borrowed books if there are any
-    def see_borrowed_books(self):
-        if len(self.books_borrowed)==0:
-            print("There isn't any book borrowed.")
-        else:
-            print("The books that are borrowed are:")
-            for book in self.books_borrowed:
-                print(book.name)
-
-# The Library class
-class Library:
-    # The constructor of the Library class
-    def __init__(self,name):
-        self.name_of_library=name
-        self.authors=[]
-        self.books=[]
-
-    # The method that returns a book object according to the name, or None if the object doesn't exists
-    def return_book_objects(self,name):
-        for book in self.books:
-            if book.name==name:
-                return book
-        return None
-    
-    # The method that prints all the books available in the library
-    def show_book(self):
-        print("These are the books available in the library")
-        for book in self.books:
-            print(book.name)
+if __name__=="__main__":
+    main()
